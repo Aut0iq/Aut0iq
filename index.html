@@ -840,19 +840,11 @@ const CARDS = {
     status: { title: 'Доступность сервисов', url: SITES.kuma + KUMA_STATUS }
 };
 
-const HOSTS = [
-    { name: 'Proxmox',   url: 'https://10.147.17.110:8006' },
-    { name: 'Navidrome', url: 'http://10.147.17.101:4533' },
-    { name: 'Feed',      url: 'https://feed.aut0iq.qzz.io' },
-    { name: 'Grafana',   url: 'http://192.168.31.25:3000' },
-    { name: 'Uptime',    url: 'http://192.168.31.25:3001' }
-];
+const STATUS_URL = '/api/status';
 
 const MAINTENANCE = { from: '00:55', to: '07:10' };
 
 const CHECK_INTERVAL = 30000;
-const CHECK_TIMEOUT  = 6000;
-const HISTORY_LENGTH = 20;
 
 const stage    = document.getElementById('viewer-stage');
 const tabsEl   = document.getElementById('tabs');
@@ -959,25 +951,11 @@ document.addEventListener('keydown', e => {
 
 openService(DEFAULT_TAB);
 
-const listEl    = document.getElementById('host-list');
-const tallyEl   = document.getElementById('hosts-tally');
+const listEl = document.getElementById('host-list');
+const tallyEl = document.getElementById('hosts-tally');
 const updatedEl = document.getElementById('hosts-updated');
-const state     = HOSTS.map(h => ({ ...h, history: [], ms: null, up: null }));
-
-state.forEach((host, i) => {
-    const li = document.createElement('li');
-    li.className = 'host';
-    li.innerHTML = `
-        <span class="dot" data-dot></span>
-        <span class="host-name">${host.name}</span>
-        <span class="pulse" data-pulse></span>
-        <span class="host-ms" data-ms>—</span>`;
-    host.el = { dot: null, pulse: null, ms: null };
-    listEl.appendChild(li);
-    host.el.dot   = li.querySelector('[data-dot]');
-    host.el.pulse = li.querySelector('[data-pulse]');
-    host.el.ms    = li.querySelector('[data-ms]');
-});
+const refreshBtn = document.getElementById('hosts-refresh');
+const rows = new Map();
 
 function inMaintenance(d = new Date()) {
     if (!MAINTENANCE) return false;
@@ -987,67 +965,86 @@ function inMaintenance(d = new Date()) {
     return from <= to ? (now >= from && now < to) : (now >= from || now < to);
 }
 
-async function probe(host) {
-    const started = performance.now();
-    const ctrl = new AbortController();
-    const timer = setTimeout(() => ctrl.abort(), CHECK_TIMEOUT);
-    try {
-        await fetch(host.url, { mode: 'no-cors', cache: 'no-store', signal: ctrl.signal });
-        return { up: true, ms: Math.round(performance.now() - started) };
-    } catch (err) {
-        return { up: false, ms: null };
-    } finally {
-        clearTimeout(timer);
-    }
+function rowFor(name) {
+    if (rows.has(name)) return rows.get(name);
+    const li = document.createElement('li');
+    li.className = 'host';
+    li.innerHTML = '<span class="dot" data-dot></span>'
+                 + '<span class="host-name"></span>'
+                 + '<span class="pulse" data-pulse></span>'
+                 + '<span class="host-ms" data-ms>—</span>';
+    li.querySelector('.host-name').textContent = name;
+    listEl.appendChild(li);
+    const row = {
+        dot: li.querySelector('[data-dot]'),
+        pulse: li.querySelector('[data-pulse]'),
+        ms: li.querySelector('[data-ms]')
+    };
+    rows.set(name, row);
+    return row;
 }
 
-function render(host) {
-    const maint = host.up === false && inMaintenance();
-    const state = host.up === null ? 'is-wait' : host.up ? 'is-up' : maint ? 'is-maint' : 'is-down';
+function draw(host, maint) {
+    const row = rowFor(host.name);
+    const down = host.up === false;
+    const state = host.up === null ? 'is-wait'
+        : host.up ? 'is-up'
+        : maint ? 'is-maint' : 'is-down';
 
-    host.el.dot.className = 'dot ' + state;
-    host.el.ms.textContent = host.up === null ? '—'
+    row.dot.className = 'dot ' + state;
+    row.ms.textContent = host.up === null ? '—'
         : host.up ? host.ms + ' ms'
         : maint ? 'обслуживание' : 'нет ответа';
-    host.el.ms.className = 'host-ms ' + (host.up === false && !maint ? 'is-down' : '');
+    row.ms.className = 'host-ms ' + (down && !maint ? 'is-down' : '');
 
-    host.el.pulse.innerHTML = '';
-    const pad = HISTORY_LENGTH - host.history.length;
-    for (let i = 0; i < pad; i++) {
-        const b = document.createElement('i');
-        b.className = 'bar is-empty';
-        host.el.pulse.appendChild(b);
+    const history = host.history || [];
+    const span = Math.max(history.length, 20);
+    row.pulse.innerHTML = '';
+    for (let i = 0; i < span - history.length; i++) {
+        const bar = document.createElement('i');
+        bar.className = 'bar is-empty';
+        row.pulse.appendChild(bar);
     }
-    host.history.forEach(r => {
-        const b = document.createElement('i');
-        b.className = 'bar ' + (r.up ? 'is-up' : r.maint ? 'is-maint' : 'is-down');
-        b.style.height = r.up ? Math.max(22, 100 - Math.min(r.ms, 900) / 12) + '%' : '100%';
-        host.el.pulse.appendChild(b);
+    history.forEach(point => {
+        const bar = document.createElement('i');
+        bar.className = 'bar ' + (point.up ? 'is-up' : maint ? 'is-maint' : 'is-down');
+        bar.style.height = point.up
+            ? Math.max(22, 100 - Math.min(point.ms || 0, 900) / 12) + '%'
+            : '100%';
+        row.pulse.appendChild(bar);
     });
 }
 
 async function checkAll() {
-    tallyEl.textContent = 'проверка…';
-    await Promise.all(state.map(async host => {
-        const res = await probe(host);
-        res.maint = !res.up && inMaintenance();
-        host.up = res.up;
-        host.ms = res.ms;
-        host.history.push(res);
-        if (host.history.length > HISTORY_LENGTH) host.history.shift();
-        render(host);
-    }));
-    const up = state.filter(h => h.up).length;
-    const maint = inMaintenance();
-    tallyEl.textContent = maint && up < state.length
-        ? `${up} / ${state.length} · обслуживание`
-        : `${up} / ${state.length} онлайн`;
-    tallyEl.className = 'tally ' + (up === state.length ? '' : maint ? 'is-maint' : 'is-down');
-    updatedEl.textContent = 'обновлено в ' + new Date().toLocaleTimeString('ru-RU');
+    refreshBtn.disabled = true;
+    try {
+        const res = await fetch(STATUS_URL, { cache: 'no-store' });
+        if (!res.ok) throw new Error(res.status);
+        const data = await res.json();
+        const maint = inMaintenance();
+
+        data.hosts.forEach(host => draw(host, maint));
+
+        const up = data.hosts.filter(h => h.up).length;
+        const total = data.hosts.length;
+        tallyEl.textContent = maint && up < total
+            ? `${up} / ${total} · обслуживание`
+            : `${up} / ${total} онлайн`;
+        tallyEl.className = 'tally ' + (up === total ? '' : maint ? 'is-maint' : 'is-down');
+
+        updatedEl.textContent = data.updated
+            ? 'проверено с VDS в ' + new Date(data.updated).toLocaleTimeString('ru-RU')
+            : 'ожидание первой проверки';
+    } catch (err) {
+        tallyEl.textContent = 'нет связи';
+        tallyEl.className = 'tally is-down';
+        updatedEl.textContent = 'служба проверки недоступна';
+    } finally {
+        refreshBtn.disabled = false;
+    }
 }
 
-state.forEach(render);
-document.getElementById('hosts-refresh').addEventListener('click', checkAll);
+refreshBtn.addEventListener('click', checkAll);
 checkAll();
 setInterval(checkAll, CHECK_INTERVAL);
 </script>
