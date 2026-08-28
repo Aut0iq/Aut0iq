@@ -16,9 +16,7 @@ HOSTS = [
     {"name": "Proxmox",   "host": "10.147.17.110", "port": 8006},
     {"name": "Navidrome", "host": "10.147.17.101", "port": 4533},
     {"name": "Monitor",   "host": "10.147.17.25"},
-    {"name": "Grafana",   "host": "10.147.17.25", "port": 3000},
     {"name": "Uptime",    "host": "10.147.17.25", "port": 3001},
-    {"name": "InfluxDB",  "host": "10.147.17.25", "port": 8086},
     {"name": "Feed",      "host": "feed.aut0iq.qzz.io", "port": 443},
 ]
 
