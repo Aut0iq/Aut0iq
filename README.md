@@ -10,6 +10,8 @@
 <div align="center">
   <img src="https://skillicons.dev/icons?i=js" height="40" alt="JavaScript" />
   <img width="12" />
+  <img src="https://skillicons.dev/icons?i=ts" height="40" alt="TypeScript" />
+  <img width="12" />
   <img src="https://skillicons.dev/icons?i=html" height="40" alt="HTML" />
   <img width="12" />
   <img src="https://skillicons.dev/icons?i=css" height="40" alt="CSS" />
@@ -34,6 +36,8 @@
   <img width="12" />
   <img src="https://skillicons.dev/icons?i=docker" height="40" alt="Docker" />
   <img width="12" />
+  <img src="https://skillicons.dev/icons?i=nginx" height="40" alt="Nginx" />
+  <img width="12" />
   <img src="https://skillicons.dev/icons?i=linux" height="40" alt="Linux" />
   <img width="12" />
   <img src="https://skillicons.dev/icons?i=bash" height="40" alt="Bash" />
@@ -41,7 +45,7 @@
   <img src="https://skillicons.dev/icons?i=androidstudio" height="40" alt="Android" />
 </div>
 
-## 🚀 Мои проекты
+### 🚀 Мои проекты
 
 <table>
   <tr>
