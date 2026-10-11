@@ -91,7 +91,6 @@ Vici, Coda и Genre Mixes работают вместе: Coda скачивает
 ## 🌐 Сайты
 
 - **[invocation.ru](https://invocation.ru)** — веб-студия полного цикла: сайты под ключ, фирменный стиль, дизайн интерфейсов и IT-поддержка.
-- **[aut0iq.qzz.io](https://aut0iq.qzz.io)** — мой личный сайт; его исходник лежит в [этом репозитории](https://github.com/Aut0iq/Aut0iq).
 
 ###
 
