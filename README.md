@@ -43,7 +43,7 @@
 
 ## 🚀 Мои проекты
 
-<table>
+
   <tr>
     <td width="50%" valign="top">
       <h3><a href="https://github.com/Aut0iq/Vici">Vici</a></h3>
