@@ -41,7 +41,6 @@
   <img src="https://skillicons.dev/icons?i=androidstudio" height="40" alt="Android" />
 </div>
 
-###
 ## 🚀 Мои проекты
 
 <table>
