@@ -86,7 +86,7 @@
 ###
 
 <p align="center">
-  <img src="https://github-readme-stats-fast.vercel.app/api?username=Aut0iq&theme=bear&show_icons=true&hide_border=true&count_private=true&locale=ru" alt="Статистика GitHub">
+  <img src="https://github-readme-stats-fast.vercel.app/api?username=Aut0iq&theme=bear&show_icons=true&hide_border=true&count_private=true&include_all_commits=true&locale=ru" alt="Статистика GitHub">
 </p>
 
 ###
