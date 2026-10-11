@@ -72,14 +72,15 @@
   <tr>
     <td width="50%" valign="top">
       <h3><a href="https://github.com/Aut0iq/navidrome-genre-mixes">Genre Mixes</a></h3>
-      <a href="https://github.com/Aut0iq/navidrome-genre-mixes/stargazers"><img src="https://img.shields.io/github/stars/Aut0iq/navidrome-genre-mixes?style=flat-square&color=E6BD55" alt="Звёзды"></a>
+      <a href="https://github.com/topics/navidrome-plugin"><img src="https://img.shields.io/badge/Navidrome-plugin-7a2a45?style=flat-square" alt="Плагин Navidrome"></a>
       <a href="https://github.com/Aut0iq/navidrome-genre-mixes/releases/latest"><img src="https://img.shields.io/github/v/release/Aut0iq/navidrome-genre-mixes?style=flat-square&color=E6BD55&label=release" alt="Релиз"></a>
       <br><br>
       Плагин Navidrome: по плейлисту на каждый жанр, треки поровну между артистами, один артист не идёт два раза подряд. В комплекте тегер поджанров.
     </td>
     <td width="50%" valign="top">
       <h3><a href="https://github.com/Aut0iq/vm-console-paste">VM Console Paste</a></h3>
-      <a href="https://github.com/Aut0iq/vm-console-paste/stargazers"><img src="https://img.shields.io/github/stars/Aut0iq/vm-console-paste?style=flat-square&color=E6BD55" alt="Звёзды"></a>
+      <img src="https://img.shields.io/badge/browser-Firefox%20%7C%20Zen-E6BD55?style=flat-square" alt="Firefox и Zen">
+      <img src="https://img.shields.io/badge/for-Proxmox-E57000?style=flat-square" alt="Proxmox">
       <br><br>
       Расширение для Firefox и Zen: вставляет текст из буфера обмена в веб-консоли виртуальных машин Proxmox, «печатая» его нажатиями клавиш.
     </td>
@@ -91,6 +92,7 @@ Vici, Coda и Genre Mixes работают вместе: Coda скачивает
 ## 🌐 Сайты
 
 - **[invocation.ru](https://invocation.ru)** — веб-студия полного цикла: сайты под ключ, фирменный стиль, дизайн интерфейсов и IT-поддержка.
+- **[aut0iq.qzz.io](https://aut0iq.qzz.io)** — мой личный сайт; его исходник лежит в [этом репозитории](https://github.com/Aut0iq/Aut0iq).
 
 ###
 
